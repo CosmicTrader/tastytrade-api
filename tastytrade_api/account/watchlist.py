@@ -1,14 +1,15 @@
 import requests
 import json
 
+
 class TastytradeWatchlist:
 
-    def __init__(self, session_token: str = None, api_url: str = 'https://api.tastytrade.com/'):
+    def __init__(
+        self, session_token: str = None, api_url: str = "https://api.tastytrade.com/"
+    ):
         self.api_url = api_url
         self.session_token = session_token
-        self.headers = {
-            "Authorization": f"{self.session_token}"
-        }
+        self.headers = {"Authorization": f"{self.session_token}"}
 
     def get_pairs_watchlists(self, pairs_watchlist_name: str = None):
         """
@@ -31,14 +32,16 @@ class TastytradeWatchlist:
             url = f"{self.api_url}/pairs-watchlists"
         else:
             url = f"{self.api_url}/pairs-watchlists/{pairs_watchlist_name}"
-        
+
         response = requests.get(url, headers=self.headers)
-    
+
         if response.status_code == 200:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting pairs watchlists: {response.status_code} - {response.content}")
+            raise Exception(
+                f"Error getting pairs watchlists: {response.status_code} - {response.content}"
+            )
 
     def get_public_watchlists(self, counts_only: bool = False):
         """
@@ -57,15 +60,17 @@ class TastytradeWatchlist:
         url = f"{self.api_url}/public-watchlists"
         if counts_only:
             url += "?counts-only=true"
-        
+
         response = requests.get(url, headers=self.headers)
 
         if response.status_code == 200:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting public watchlists: {response.status_code} - {response.content}")
-        
+            raise Exception(
+                f"Error getting public watchlists: {response.status_code} - {response.content}"
+            )
+
     def get_public_watchlist(self, watchlist_name: str):
         """
         Returns a requested tastyworks pairs watchlist
@@ -80,7 +85,7 @@ class TastytradeWatchlist:
         Raises:
             Exception: If the HTTP response status code is not 200.
         """
-    
+
         url = f"{self.api_url}/public-watchlists/{watchlist_name}"
         response = requests.get(url, headers=self.headers)
 
@@ -88,8 +93,10 @@ class TastytradeWatchlist:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting public watchlist: {response.status_code} - {response.content}")
-        
+            raise Exception(
+                f"Error getting public watchlist: {response.status_code} - {response.content}"
+            )
+
     def create_account_watchlist(self, watchlist_data):
         """
         Creates an account watchlist.
@@ -129,8 +136,10 @@ class TastytradeWatchlist:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error creating account watchlist: {response.status_code} - {response.content}")
-    
+            raise Exception(
+                f"Error creating account watchlist: {response.status_code} - {response.content}"
+            )
+
     def get_account_watchlists(self, watchlist_name: str = None):
         """
         Returns a list of all watchlists for the given account, or a requested watchlist if a watchlist name is specified.
@@ -156,7 +165,10 @@ class TastytradeWatchlist:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting account watchlists: {response.status_code} - {response.content}")
+            raise Exception(
+                f"Error getting account watchlists: {response.status_code} - {response.content}"
+            )
+
     def update_account_watchlist(self, watchlist_name: str, watchlist_data):
         """
         Replace all properties of an account watchlist
@@ -176,7 +188,10 @@ class TastytradeWatchlist:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error updating account watchlist: {response.status_code} - {response.content}")
+            raise Exception(
+                f"Error updating account watchlist: {response.status_code} - {response.content}"
+            )
+
     def delete_account_watchlist(self, watchlist_name: str):
         """
         Deletes a watchlist for the given account.
@@ -194,4 +209,6 @@ class TastytradeWatchlist:
         if response.status_code == 204:
             return {}
         else:
-            raise Exception(f"Error deleting account watchlist: {response.status_code} - {response.content}")
+            raise Exception(
+                f"Error deleting account watchlist: {response.status_code} - {response.content}"
+            )

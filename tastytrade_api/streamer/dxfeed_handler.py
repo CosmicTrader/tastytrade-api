@@ -5,6 +5,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class CometdWebsocketClient:
     def __init__(self, url, auth_token, data_queue, on_handshake_success=None):
         """
@@ -14,13 +15,13 @@ class CometdWebsocketClient:
         :param auth_token: The authentication token to use.
         :param data_queue: The queue to put data into.
         :param on_handshake_success: Optional function to call on successful handshake.
-         """
+        """
         self.url = url
         self.auth_token = auth_token
         self.on_handshake_success = on_handshake_success
         self.message_id = 0
         self.data_queue = data_queue
-    
+
     def next_id(self):
         self.message_id += 1
         return str(self.message_id)
@@ -28,11 +29,11 @@ class CometdWebsocketClient:
     async def connect(self):
         """
         Connect to the websocket server using the URL and authorization token provided
-        during initialization. 
+        during initialization.
         """
         headers = {
-            'Authorization': 'Bearer ' + self.auth_token,
-            'User-Agent': 'My Python App'
+            "Authorization": "Bearer " + self.auth_token,
+            "User-Agent": "My Python App",
         }
         """ ssl_context = ssl.create_default_context()
         ssl_context.check_hostname = False
@@ -46,14 +47,12 @@ class CometdWebsocketClient:
 
             # Process data messages from the listen method
             async for message_data in self.listen(websocket):
-             #   print("Received data:", message_data)
+                #   print("Received data:", message_data)
                 await self.data_queue.put(message_data)
-
 
             # Make sure the heartbeat task is canceled
             heartbeat.cancel()
             await asyncio.gather(heartbeat, return_exceptions=True)
-
 
     async def send_handshake(self, websocket):
         """
@@ -87,19 +86,20 @@ class CometdWebsocketClient:
             "version": "1.0",
             "minimumVersion": "1.0",
             "channel": "/meta/handshake",
-            "supportedConnectionTypes": ["websocket","long-polling","callback-polling"],
-            "ext": {
-                "com.devexperts.auth.AuthToken":  self.auth_token
-            },
-            "advice": {
-                "timeout":60000,
-                "interval":0
-            }
+            "supportedConnectionTypes": [
+                "websocket",
+                "long-polling",
+                "callback-polling",
+            ],
+            "ext": {"com.devexperts.auth.AuthToken": self.auth_token},
+            "advice": {"timeout": 60000, "interval": 0},
         }
         handshake_str = json.dumps([handshake_message])
         await websocket.send(handshake_str)
 
-    async def send_subscription_message(self, websocket, event_type, symbol, on_subscription_success=None):
+    async def send_subscription_message(
+        self, websocket, event_type, symbol, on_subscription_success=None
+    ):
         """
         Sends a subscription message to the specified websocket for the specified event type and symbol.
         :param websocket: The websocket to send the subscription message to.
@@ -113,11 +113,9 @@ class CometdWebsocketClient:
             "channel": "/service/sub",
             "clientId": self.client_id,
             "data": {
-                "reset": False, # If true, the subscription will be reset after each new message
-                "add": {
-                    event_type: [symbol]
-                }
-            }
+                "reset": False,  # If true, the subscription will be reset after each new message
+                "add": {event_type: [symbol]},
+            },
         }
         subscription_str = json.dumps([subscription_message])
         await websocket.send(subscription_str)
@@ -136,8 +134,7 @@ class CometdWebsocketClient:
             message = await websocket.recv()
             async for data_message in self.handle_message(message):
                 yield data_message
-           
-        
+
     async def handle_message(self, message):
         """
         Handle incoming message data.
@@ -168,16 +165,15 @@ class CometdWebsocketClient:
                     logger.debug("Subscription successful")
                 else:
                     logger.warning("Subscription failed")
-            
+
             elif channel == "/service/data":
                 if data[0].get("data"):
-                    yield data[0]['data']
+                    yield data[0]["data"]
                 else:
                     logger.warning("Data message has no data field")
 
         else:
             logger.warning(f"Unexpected message format: {message}")
-
 
     async def process_handshake(self, handshake_data):
         """
@@ -190,14 +186,17 @@ class CometdWebsocketClient:
         :param handshake_data: A dictionary containing the handshake data.
         :type handshake_data: dict
         """
-        if "successful" in handshake_data and handshake_data["successful"] and "clientId" in handshake_data:
+        if (
+            "successful" in handshake_data
+            and handshake_data["successful"]
+            and "clientId" in handshake_data
+        ):
             self.client_id = handshake_data["clientId"]
             logger.debug(f"Handshake successful, client ID: {self.client_id}")
 
-                    # Call the on_handshake_success callback if provided
+            # Call the on_handshake_success callback if provided
             if self.on_handshake_success:
                 await self.on_handshake_success(self)
-
 
     async def send_connect_message(self, websocket):
         """
@@ -210,18 +209,18 @@ class CometdWebsocketClient:
             "id": self.next_id(),
             "channel": "/meta/connect",
             "clientId": self.client_id,
-            "connectionType": "websocket"
+            "connectionType": "websocket",
         }
         connect_str = json.dumps([connect_message])
         await websocket.send(connect_str)
-        
+
     async def send_heartbeat(self, websocket):
         while True:
             await asyncio.sleep(10)  # Send the heartbeat every 10 seconds
             heartbeat_message = {
-                 "id": self.next_id(),
+                "id": self.next_id(),
                 "channel": "/meta/connect",
                 "clientId": self.client_id,
-                "connectionType": "websocket"
+                "connectionType": "websocket",
             }
             await websocket.send(json.dumps([heartbeat_message]))

@@ -9,10 +9,19 @@ import functools
 
 logger = logging.getLogger(__name__)
 
+
 class TastytradeStreamer:
     """A class to handle the streaming of data from the Tastytrade API using WebSockets."""
 
-    def __init__(self, session_token, websocket_url, message_callback=None, error_callback=None, open_callback=None, close_callback=None):
+    def __init__(
+        self,
+        session_token,
+        websocket_url,
+        message_callback=None,
+        error_callback=None,
+        open_callback=None,
+        close_callback=None,
+    ):
         self.session_token = session_token
         self.websocket_url = websocket_url
         self.ws = None
@@ -42,7 +51,7 @@ class TastytradeStreamer:
         def send_wrapper(ws, message):
             print(f"Sent message: {message}")
             return WebSocketApp.send(self.ws, message)
-        
+
         """Connects to the WebSocket and sets the provided callback functions."""
         self.ws = WebSocketApp(
             self.websocket_url,
@@ -59,7 +68,9 @@ class TastytradeStreamer:
 
     def send_heartbeat(self):
         """Sends a heartbeat message to the server."""
-        heartbeat_message = json.dumps({"auth-token": self.session_token,"action": "heartbeat", "value": ""})
+        heartbeat_message = json.dumps(
+            {"auth-token": self.session_token, "action": "heartbeat", "value": ""}
+        )
         self.ws.send(heartbeat_message)
         logger.info("Sent heartbeat message")
 
@@ -72,16 +83,25 @@ class TastytradeStreamer:
         connect_message = json.dumps({"action": "connect", "value": account_numbers})
         self.ws.send(connect_message)
         logger.info("Sent connect message for accounts: %s", account_numbers)
-        
+
     def account_subscribe(self, account_numbers):
         """Sends an account-subscribe message to subscribe to account level updates.
            This method may be deprecated in the future, consider using 'connect_account' instead.
         Args:
             account_numbers (list): A list of account numbers to subscribe to.
         """
-        account_subscribe_message = json.dumps({"auth-token": self.session_token, "action": "account-subscribe", "value": account_numbers})
+        account_subscribe_message = json.dumps(
+            {
+                "auth-token": self.session_token,
+                "action": "account-subscribe",
+                "value": account_numbers,
+            }
+        )
         self.ws.send(account_subscribe_message)
-        logger.warning("Sent account-subscribe message for accounts: %s. This method may be deprecated in the future, consider using 'connect_account' instead.", account_numbers)
+        logger.warning(
+            "Sent account-subscribe message for accounts: %s. This method may be deprecated in the future, consider using 'connect_account' instead.",
+            account_numbers,
+        )
 
     def start_heartbeat(self, interval=30):
         """Starts sending heartbeat messages at the specified interval (in seconds).
@@ -90,7 +110,9 @@ class TastytradeStreamer:
             interval (int): The interval between heartbeat messages in seconds.
         """
         if not self.ws:
-            logger.error("WebSocket is not connected. Please call 'connect' before starting the heartbeat.")
+            logger.error(
+                "WebSocket is not connected. Please call 'connect' before starting the heartbeat."
+            )
             return
 
         def send_heartbeat_periodically():
@@ -105,13 +127,25 @@ class TastytradeStreamer:
 
     def public_watchlists_subscribe(self):
         """Sends a message to subscribe to public watchlist updates."""
-        subscribe_message = json.dumps({"auth-token": self.session_token, "action": "public-watchlists-subscribe", "value": ""})
+        subscribe_message = json.dumps(
+            {
+                "auth-token": self.session_token,
+                "action": "public-watchlists-subscribe",
+                "value": "",
+            }
+        )
         self.ws.send(subscribe_message)
         logger.info("Sent public-watchlists-subscribe message")
 
     def quote_alerts_subscribe(self):
         """Sends a message to subscribe to quote alert messages."""
-        subscribe_message = json.dumps({"auth-token": self.session_token, "action": "quote-alerts-subscribe", "value": ""})
+        subscribe_message = json.dumps(
+            {
+                "auth-token": self.session_token,
+                "action": "quote-alerts-subscribe",
+                "value": "",
+            }
+        )
         self.ws.send(subscribe_message)
         logger.info("Sent quote-alerts-subscribe message")
 
@@ -121,13 +155,25 @@ class TastytradeStreamer:
         Args:
             user_external_id (str): The user's external-id returned in the POST /sessions response.
         """
-        subscribe_message = json.dumps({"auth-token": self.session_token, "action": "user-message-subscribe", "value": user_external_id})
+        subscribe_message = json.dumps(
+            {
+                "auth-token": self.session_token,
+                "action": "user-message-subscribe",
+                "value": user_external_id,
+            }
+        )
         self.ws.send(subscribe_message)
-        logger.info("Sent user-message-subscribe message for user_external_id: %s", user_external_id)
-    
+        logger.info(
+            "Sent user-message-subscribe message for user_external_id: %s",
+            user_external_id,
+        )
+
     def wait_for_connection(self, timeout=10):
         start_time = time.time()
-        while not (self.ws.sock and self.ws.sock.connected) and time.time() - start_time < timeout:
+        while (
+            not (self.ws.sock and self.ws.sock.connected)
+            and time.time() - start_time < timeout
+        ):
             time.sleep(0.1)
 
         if not (self.ws.sock and self.ws.sock.connected):
@@ -136,7 +182,9 @@ class TastytradeStreamer:
 
         logger.info("WebSocket is connected")
         return True
-'''
+
+
+"""
 import logging
 
 logger = logging.getLogger()
@@ -155,4 +203,4 @@ if streamer.wait_for_connection():
     streamer.quote_alerts_subscribe()
     while streamer.ws.sock and streamer.ws.sock.connected:
         time.sleep(1)
-'''
+"""

@@ -1,7 +1,8 @@
 import requests
 from typing import List
 
-class MarketMetrics():
+
+class MarketMetrics:
     """
     Initializes a new instance of the MarketMetrics client with the given session token and API URL.
 
@@ -12,6 +13,7 @@ class MarketMetrics():
     Returns:
         None
     """
+
     def __init__(self, session_token, api_url):
         self.session_token = session_token
         self.api_url = api_url
@@ -31,19 +33,19 @@ class MarketMetrics():
         Raises:
             Exception: If there was an error in the GET request or if the status code is not 200 OK.
         """
-        headers = {
-            "Authorization": f"{self.session_token}"
-        }
-        params = {
-            "symbols": ",".join(symbols)
-        }
-        response = requests.get(f"{self.api_url}/market-metrics", headers=headers, params=params)
+        headers = {"Authorization": f"{self.session_token}"}
+        params = {"symbols": ",".join(symbols)}
+        response = requests.get(
+            f"{self.api_url}/market-metrics", headers=headers, params=params
+        )
         if response.status_code == 200:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting market metrics: {response.status_code} - {response.content}")
-    
+            raise Exception(
+                f"Error getting market metrics: {response.status_code} - {response.content}"
+            )
+
     def get_dividend_data(self, symbol):
         """
         Get historical dividend data
@@ -60,16 +62,18 @@ class MarketMetrics():
         Raises:
             Exception: If there was an error in the GET request or if the status code is not 200 OK.
         """
-        headers = {
-            "Authorization": f"{self.session_token}"
-        }
-        response = requests.get(f"{self.api_url}/market-metrics/historic-corporate-events/dividends/{symbol}", headers=headers)
+        headers = {"Authorization": f"{self.session_token}"}
+        response = requests.get(
+            f"{self.api_url}/market-metrics/historic-corporate-events/dividends/{symbol}",
+            headers=headers,
+        )
         if response.status_code == 200:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting dividend data for symbol {symbol}: {response.status_code} - {response.content}")
-
+            raise Exception(
+                f"Error getting dividend data for symbol {symbol}: {response.status_code} - {response.content}"
+            )
 
     def get_earnings_data(self, symbol: str, start_date: str = None) -> dict:
         """
@@ -86,9 +90,7 @@ class MarketMetrics():
         Raises:
             Exception: If there was an error in the GET request or if the status code is not 200 OK.
         """
-        headers = {
-            "Authorization": f"{self.session_token}"
-        }
+        headers = {"Authorization": f"{self.session_token}"}
         url = f"{self.api_url}/market-metrics/historic-corporate-events/earnings-reports/{symbol}"
         if start_date:
             url += f"?start-date={start_date}"
@@ -97,5 +99,6 @@ class MarketMetrics():
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting earnings data for {symbol}: {response.status_code} - {response.content}")
-
+            raise Exception(
+                f"Error getting earnings data for {symbol}: {response.status_code} - {response.content}"
+            )

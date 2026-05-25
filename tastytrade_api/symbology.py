@@ -1,4 +1,6 @@
-def to_tastytrade_option_symbol(symbol: str, strike_price: float, option_type: str, expiration_date: str) -> str:
+def to_tastytrade_option_symbol(
+    symbol: str, strike_price: float, option_type: str, expiration_date: str
+) -> str:
     """
     Generate Tastytrade option symbol based on input parameters.
 
@@ -15,23 +17,24 @@ def to_tastytrade_option_symbol(symbol: str, strike_price: float, option_type: s
         >>> to_tastytrade_option_symbol("AAPL", 130.0, "call", "2022-01-21")
         "AAPL  220121C00130000"
     """
- 
+
     # convert strike price to 8-digit integer (multiply by 1000 and convert to int)
     strike_price_int = int(strike_price * 1000)
-    
+
     # format expiration date to yymmdd format
-    expiration_date_formatted = expiration_date[2:].replace('-', '')
-    
+    expiration_date_formatted = expiration_date[2:].replace("-", "")
+
     # format option type to P or C
     option_type_formatted = option_type[0].upper()
-    
+
     # pad symbol with whitespace to 6 characters
     symbol_padded = symbol.ljust(6)
-    
+
     # combine all parts to form Tastytrade option symbol
     option_symbol = f"{symbol_padded}{expiration_date_formatted}{option_type_formatted}{strike_price_int:08d}"
-    
+
     return option_symbol
+
 
 def to_tastytrade_future_symbol(product_code: str, expiration_date: str) -> str:
     """
@@ -48,9 +51,9 @@ def to_tastytrade_future_symbol(product_code: str, expiration_date: str) -> str:
         >>> to_tastytrade_future_symbol("CL", "2022-12")
         "/CLZ22"
     """
-    year, month = expiration_date.split('-')
+    year, month = expiration_date.split("-")
     month_codes = "FGHJKMNQUVXZ"
-    month_code = month_codes[int(month)-1]
+    month_code = month_codes[int(month) - 1]
     last_digit_of_year = year[-1]
 
     # Combine the product code, month code, and year code to form the Tastytrade future symbol
@@ -58,7 +61,15 @@ def to_tastytrade_future_symbol(product_code: str, expiration_date: str) -> str:
 
     return future_symbol
 
-def to_tastytrade_future_option_symbol(symbol: str, future_month: str, option_product_code: str, expiration_date: str, option_type: str, strike_price: float) -> str:
+
+def to_tastytrade_future_option_symbol(
+    symbol: str,
+    future_month: str,
+    option_product_code: str,
+    expiration_date: str,
+    option_type: str,
+    strike_price: float,
+) -> str:
     """
     Generate Tastytrade future option symbol based on input parameters.
 
@@ -79,7 +90,7 @@ def to_tastytrade_future_option_symbol(symbol: str, future_month: str, option_pr
     """
 
     # Convert expiration date to yyMMdd format
-    expiration_date_formatted = expiration_date[2:].replace('-', '')
+    expiration_date_formatted = expiration_date[2:].replace("-", "")
 
     # Convert option type to C or P
     option_type_formatted = option_type[0].upper()
@@ -91,4 +102,3 @@ def to_tastytrade_future_option_symbol(symbol: str, future_month: str, option_pr
     future_option_symbol = f"./{symbol}{future_month} {option_product_code} {expiration_date_formatted}{option_type_formatted}{strike_price_int:05d}"
 
     return future_option_symbol
-

@@ -1,8 +1,23 @@
 import json
 
+
 class Quote:
 
-    def __init__(self, symbol, event_time, sequence, time_nano_part, bid_time, bid_exchange_code, bid_price, bid_size, ask_time, ask_exchange_code, ask_price, ask_size):
+    def __init__(
+        self,
+        symbol,
+        event_time,
+        sequence,
+        time_nano_part,
+        bid_time,
+        bid_exchange_code,
+        bid_price,
+        bid_size,
+        ask_time,
+        ask_exchange_code,
+        ask_price,
+        ask_size,
+    ):
         """
         Initializes an instance of the class with the given parameters.
 
@@ -44,14 +59,19 @@ class Quote:
 
         Returns:
             list: The list of Quote objects created from the data.
-        """ 
+        """
         quotes = []
         if not data_list:
             print("Invalid data list received")
             return quotes
 
         # Check if the first element is a header, if yes, skip it
-        if isinstance(data_list[0], list) and len(data_list[0]) > 1 and data_list[0][0] == 'Quote' and data_list[0][1][0] == 'eventSymbol':
+        if (
+            isinstance(data_list[0], list)
+            and len(data_list[0]) > 1
+            and data_list[0][0] == "Quote"
+            and data_list[0][1][0] == "eventSymbol"
+        ):
             data_list = data_list[1:]
 
         for i in range(0, len(data_list)):
@@ -59,14 +79,38 @@ class Quote:
             if len(quote_data) != 12:
                 continue
 
-            symbol, event_time, sequence, time_nano_part, bid_time, bid_exchange_code, bid_price, bid_size, ask_time, ask_exchange_code, ask_price, ask_size = quote_data
-            bid_size = float(bid_size) if bid_size != 'NaN' else None
-            ask_size = float(ask_size) if ask_size != 'NaN' else None
-            quote = cls(symbol, event_time, sequence, time_nano_part, bid_time, bid_exchange_code, bid_price, bid_size, ask_time, ask_exchange_code, ask_price, ask_size)
+            (
+                symbol,
+                event_time,
+                sequence,
+                time_nano_part,
+                bid_time,
+                bid_exchange_code,
+                bid_price,
+                bid_size,
+                ask_time,
+                ask_exchange_code,
+                ask_price,
+                ask_size,
+            ) = quote_data
+            bid_size = float(bid_size) if bid_size != "NaN" else None
+            ask_size = float(ask_size) if ask_size != "NaN" else None
+            quote = cls(
+                symbol,
+                event_time,
+                sequence,
+                time_nano_part,
+                bid_time,
+                bid_exchange_code,
+                bid_price,
+                bid_size,
+                ask_time,
+                ask_exchange_code,
+                ask_price,
+                ask_size,
+            )
             quotes.append(quote)
         return quotes
-
-
 
     def __str__(self):
         """

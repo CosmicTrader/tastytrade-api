@@ -7,6 +7,7 @@ import unittest
 import requests_mock
 from tastytrade_api.authentication import TastytradeAuth
 
+
 class TestTastytradeAuth(unittest.TestCase):
     API_URL = "https://api.tastytrade.com/sessions"
 
@@ -18,16 +19,16 @@ class TestTastytradeAuth(unittest.TestCase):
     @requests_mock.Mocker()
     def test_login_success(self, mock):
         mock_response = {
-            'data': {
-                'user': {
-                    'email': 'email@me.com',
-                    'username': 'test_username',
-                    'external-id': 'abcd-123'
+            "data": {
+                "user": {
+                    "email": "email@me.com",
+                    "username": "test_username",
+                    "external-id": "abcd-123",
                 },
-                'remember-token': 'rm-abcabc123123',
-                'session-token': 'st-abcabc123123'
+                "remember-token": "rm-abcabc123123",
+                "session-token": "st-abcabc123123",
             },
-            'context': '/sessions'
+            "context": "/sessions",
         }
         mock.post(self.API_URL, json=mock_response, status_code=201)
 
@@ -36,11 +37,15 @@ class TestTastytradeAuth(unittest.TestCase):
         with self.subTest("Check auth_data"):
             self.assertIsNotNone(auth_data)
         with self.subTest("Check session_token"):
-            self.assertEqual(self.auth.session_token, mock_response['data']['session-token'])
+            self.assertEqual(
+                self.auth.session_token, mock_response["data"]["session-token"]
+            )
         with self.subTest("Check remember_token"):
-            self.assertEqual(self.auth.remember_token, mock_response['data']['remember-token'])
+            self.assertEqual(
+                self.auth.remember_token, mock_response["data"]["remember-token"]
+            )
         with self.subTest("Check user_data"):
-            self.assertEqual(self.auth.user_data, mock_response['data']['user'])
+            self.assertEqual(self.auth.user_data, mock_response["data"]["user"])
 
     @requests_mock.Mocker()
     def test_login_failure(self, mock):
@@ -61,16 +66,16 @@ class TestTastytradeAuth(unittest.TestCase):
     def test_login_success_with_two_factor(self, mock):
         two_factor_code = "123456"
         mock_response = {
-            'data': {
-                'user': {
-                    'email': 'email@me.com',
-                    'username': 'test_username',
-                    'external-id': 'abcd-123'
+            "data": {
+                "user": {
+                    "email": "email@me.com",
+                    "username": "test_username",
+                    "external-id": "abcd-123",
                 },
-                'remember-token': 'rm-abcabc123123',
-                'session-token': 'st-abcabc123123'
+                "remember-token": "rm-abcabc123123",
+                "session-token": "st-abcabc123123",
             },
-            'context': '/sessions'
+            "context": "/sessions",
         }
         mock.post(self.API_URL, json=mock_response, status_code=201)
 
@@ -79,11 +84,15 @@ class TestTastytradeAuth(unittest.TestCase):
         with self.subTest("Check auth_data"):
             self.assertIsNotNone(auth_data)
         with self.subTest("Check session_token"):
-            self.assertEqual(self.auth.session_token, mock_response['data']['session-token'])
+            self.assertEqual(
+                self.auth.session_token, mock_response["data"]["session-token"]
+            )
         with self.subTest("Check remember_token"):
-            self.assertEqual(self.auth.remember_token, mock_response['data']['remember-token'])
+            self.assertEqual(
+                self.auth.remember_token, mock_response["data"]["remember-token"]
+            )
         with self.subTest("Check user_data"):
-            self.assertEqual(self.auth.user_data, mock_response['data']['user'])
+            self.assertEqual(self.auth.user_data, mock_response["data"]["user"])
 
     @requests_mock.Mocker()
     def test_destroy_session(self, mock):
@@ -113,5 +122,6 @@ class TestTastytradeAuth(unittest.TestCase):
         with self.subTest("Check session_token"):
             self.assertIsNotNone(self.auth.session_token)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

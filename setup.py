@@ -23,12 +23,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
-
     ],
     python_requires=">=3.6",
-    install_requires=[
-        "requests",
-        "websocket-client",
-        "websockets"
-    ],
+    install_requires=["requests", "websocket-client", "websockets"],
 )

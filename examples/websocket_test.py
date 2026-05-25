@@ -18,8 +18,8 @@ def main():
     config = configparser.ConfigParser()
     config.read("config.ini")
     websocket_url = config["WEBSOCKET"]["websocket_url"]
-    username = config.get('ACCOUNT', 'username')
-    password = config.get('ACCOUNT', 'password')
+    username = config.get("ACCOUNT", "username")
+    password = config.get("ACCOUNT", "password")
     # Initialize the authentication object
     auth = TastytradeAuth(username, password)
 

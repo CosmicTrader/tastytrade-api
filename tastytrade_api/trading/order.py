@@ -1,16 +1,17 @@
 import requests
 import json
 
+
 class TastytradeOrder:
-    def __init__(self, session_token: str = None, api_url: str = 'https://api.tastytrade.com/accounts'):
+    def __init__(
+        self,
+        session_token: str = None,
+        api_url: str = "https://api.tastytrade.com/accounts",
+    ):
         self.api_url = api_url
         self.session_token = session_token
-        self.headers = {
-            "Authorization": f"{self.session_token}"
-        }
+        self.headers = {"Authorization": f"{self.session_token}"}
 
-        
-    
     def reconfirm_order(self, account_number, order_id):
         """
         Makes a POST request to the /accounts/{account_number}/orders/{order_id}/reconfirm API endpoint to reconfirm an order,
@@ -28,19 +29,21 @@ class TastytradeOrder:
         """
         url = f"{self.api_url}/accounts/{account_number}/orders/{order_id}/reconfirm"
         response = requests.post(url, headers=self.headers)
-        
+
         if response.status_code == 201:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error reconfirming order: {response.status_code} - {response.content}")
-    
+            raise Exception(
+                f"Error reconfirming order: {response.status_code} - {response.content}"
+            )
+
     def dry_run_order(self, account_number, order_id, order_data):
         """
         Runs through preflights for cancel-replace and edit without routing
-        
+
         Makes a POST request to the /accounts/{account_number}/orders/{order_id}/dry-run API endpoint to run preflights for cancel-replace and edit without routing,
-        and returns the response as a JSON object. 
+        and returns the response as a JSON object.
 
         Args:
             account_number (int): The account number for the order to run preflights on.
@@ -55,17 +58,19 @@ class TastytradeOrder:
         """
         url = f"{self.api_url}/accounts/{account_number}/orders/{order_id}/dry-run"
         response = requests.post(url, headers=self.headers, json=order_data)
-        
+
         if response.status_code == 201:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error running dry run order: {response.status_code} - {response.content}")
+            raise Exception(
+                f"Error running dry run order: {response.status_code} - {response.content}"
+            )
 
     def get_order(self, account_number, order_id):
         """
         Returns a single order based on the id
-        
+
         Makes a GET request to the /accounts/{account_number}/orders/{order_id} API endpoint to get a single order based on its ID,
         and returns the response as a JSON object.
 
@@ -81,13 +86,15 @@ class TastytradeOrder:
         """
         url = f"{self.api_url}/accounts/{account_number}/orders/{order_id}"
         response = requests.get(url, headers=self.headers)
-        
+
         if response.status_code == 200:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting order: {response.status_code} - {response.content}")
-        
+            raise Exception(
+                f"Error getting order: {response.status_code} - {response.content}"
+            )
+
     def cancel_order(self, account_number, order_id):
         """
         Requests order cancellation
@@ -107,13 +114,15 @@ class TastytradeOrder:
         """
         url = f"{self.api_url}/accounts/{account_number}/orders/{order_id}"
         response = requests.delete(url, headers=self.headers)
-        
+
         if response.status_code == 200:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error cancelling order: {response.status_code} - {response.content}")
-        
+            raise Exception(
+                f"Error cancelling order: {response.status_code} - {response.content}"
+            )
+
     def replace_order(self, account_number, order_id, order_data):
         """
         Replaces a live order with a new one. Subsequent fills of the original order will abort the replacement.
@@ -134,17 +143,19 @@ class TastytradeOrder:
         """
         url = f"{self.api_url}/accounts/{account_number}/orders/{order_id}"
         response = requests.put(url, headers=self.headers, json=order_data)
-        
+
         if response.status_code == 200:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error replacing order: {response.status_code} - {response.content}")
+            raise Exception(
+                f"Error replacing order: {response.status_code} - {response.content}"
+            )
 
     def edit_order(self, account_number, order_id, order_data):
         """
         Edit price and execution properties of a live order by replacement. Subsequent fills of the original order
-        
+
         Makes a PATCH request to the /accounts/{account_number}/orders/{order_id} API endpoint to edit price and execution properties of a live order by replacement,
         and returns the response as a JSON object.
 
@@ -161,13 +172,15 @@ class TastytradeOrder:
         """
         url = f"{self.api_url}/accounts/{account_number}/orders/{order_id}"
         response = requests.patch(url, headers=self.headers, json=order_data)
-        
+
         if response.status_code == 200:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error editing order: {response.status_code} - {response.content}")
-        
+            raise Exception(
+                f"Error editing order: {response.status_code} - {response.content}"
+            )
+
     def get_live_orders(self, account_number):
         """
         Returns a list of live orders for the resource
@@ -187,19 +200,34 @@ class TastytradeOrder:
         """
         url = f"{self.api_url}/accounts/{account_number}/orders/live"
         response = requests.get(url, headers=self.headers)
-        
+
         if response.status_code == 200:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting live orders: {response.status_code} - {response.content}")
-        
-    def get_orders(self, account_number, per_page=10, page_offset=0, start_date=None, end_date=None, underlying_symbol=None, 
-                   status=None, futures_symbol=None, underlying_instrument_type=None, sort='Desc', start_at=None, end_at=None):
+            raise Exception(
+                f"Error getting live orders: {response.status_code} - {response.content}"
+            )
+
+    def get_orders(
+        self,
+        account_number,
+        per_page=10,
+        page_offset=0,
+        start_date=None,
+        end_date=None,
+        underlying_symbol=None,
+        status=None,
+        futures_symbol=None,
+        underlying_instrument_type=None,
+        sort="Desc",
+        start_at=None,
+        end_at=None,
+    ):
         """
         Returns a paginated list of the customer's orders (as identified by the provided authentication token)
         based on sort param. If no sort is passed in, it defaults to descending order.
-        
+
         Makes a GET request to the /accounts/{account_number}/orders API endpoint to retrieve a paginated list of the customer's orders
         based on the provided parameters, and returns the response as a JSON object.
 
@@ -235,16 +263,18 @@ class TastytradeOrder:
             "underlying-instrument-type": underlying_instrument_type,
             "sort": sort,
             "start-at": start_at,
-            "end-at": end_at
+            "end-at": end_at,
         }
         response = requests.get(url, headers=self.headers, params=params)
-        
+
         if response.status_code == 200:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting orders: {response.status_code} - {response.content}")
-        
+            raise Exception(
+                f"Error getting orders: {response.status_code} - {response.content}"
+            )
+
     def create_order(self, account_number, order):
         """
         Accepts a json document containing parameters to create an order for the client.
@@ -265,21 +295,23 @@ class TastytradeOrder:
         url = f"{self.api_url}/accounts/{account_number}/orders"
         headers = {
             "Authorization": f"{self.session_token}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
         response = requests.post(url, headers=headers, json=order)
-        
+
         if response.status_code == 201:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error creating order: {response.status_code} - {response.content}")
-        
+            raise Exception(
+                f"Error creating order: {response.status_code} - {response.content}"
+            )
+
     def dry_run_new_order(self, account_number, order_data):
         """
         Accepts a json document containing parameters to create an order and then runs the preflights without placing the order.
 
-        Makes a POST request to the /accounts/{account_number}/orders/dry-run API endpoint to validate a new order without placing it, 
+        Makes a POST request to the /accounts/{account_number}/orders/dry-run API endpoint to validate a new order without placing it,
         and returns the response as a JSON object.
 
         Args:
@@ -294,12 +326,14 @@ class TastytradeOrder:
         """
         url = f"{self.api_url}/accounts/{account_number}/orders/dry-run"
         response = requests.post(url, headers=self.headers, json=order_data)
-        
+
         if response.status_code == 201:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error running dry run new order: {response.status_code} - {response.content}")
+            raise Exception(
+                f"Error running dry run new order: {response.status_code} - {response.content}"
+            )
 
     def get_customer_live_orders(self, customer_id):
         """
@@ -324,15 +358,29 @@ class TastytradeOrder:
             response_data = response.json()
             return response_data
         else:
-            raise Exception(f"Error getting live orders for customer {customer_id}: {response.status_code} - {response.content}")
-        
-    def get_customer_orders(self, customer_id, per_page=10, page_offset=0, start_date=None, end_date=None,
-                             underlying_symbol=None, status=None, futures_symbol=None, underlying_instrument_type=None,
-                             sort='Desc', start_at=None, end_at=None):
+            raise Exception(
+                f"Error getting live orders for customer {customer_id}: {response.status_code} - {response.content}"
+            )
+
+    def get_customer_orders(
+        self,
+        customer_id,
+        per_page=10,
+        page_offset=0,
+        start_date=None,
+        end_date=None,
+        underlying_symbol=None,
+        status=None,
+        futures_symbol=None,
+        underlying_instrument_type=None,
+        sort="Desc",
+        start_at=None,
+        end_at=None,
+    ):
         """
-        Returns a paginated list of the customer's orders based on sort param. 
+        Returns a paginated list of the customer's orders based on sort param.
         If no sort is passed in, it defaults to descending order.
-        
+
         Makes a GET request to the /customers/{customer_id}/orders API endpoint for the authenticated customer's orders,
         and returns a paginated list of the orders.
 
@@ -368,7 +416,7 @@ class TastytradeOrder:
             "underlying-instrument-type": underlying_instrument_type,
             "sort": sort,
             "start-at": start_at,
-            "end-at": end_at
+            "end-at": end_at,
         }
         response = requests.get(url, headers=self.headers, params=params)
         if response.status_code == 200:
@@ -376,4 +424,6 @@ class TastytradeOrder:
             orders = response_data["data"]["items"]
             return orders
         else:
-            raise Exception(f"Error getting customer orders: {response.status_code} - {response.content}")
+            raise Exception(
+                f"Error getting customer orders: {response.status_code} - {response.content}"
+            )

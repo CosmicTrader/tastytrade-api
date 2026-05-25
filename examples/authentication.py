@@ -3,10 +3,10 @@ from tastytrade_api.account.account_handler import TastytradeAccount
 import configparser
 
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read("config.ini")
 
-username = config.get('ACCOUNT', 'username')
-password = config.get('ACCOUNT', 'password')
+username = config.get("ACCOUNT", "username")
+password = config.get("ACCOUNT", "password")
 
 
 # Initialize the authentication object
